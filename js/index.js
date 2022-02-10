@@ -1,34 +1,31 @@
-
-
 const app = {
     data() {
         return {
             url: "https://vue3-course-api.hexschool.io/v2",
             path: "chingno2004",
-            products: [],
-            tempProduct: {}
+            user: {
+                username: '',
+                password: ''
+            },
         }
     },
     methods: {
-        getData() {
-            axios.get(`${this.url}/api/${this.path}/admin/products`)
+        login() {
+            axios.post("https://vue3-course-api.hexschool.io/v2/admin/signin", this.user)
                 .then((res) => {
-                    this.products = res.data.products;
+                    console.log(res);
+                    const { token, expired } = res.data;
+                    document.cookie = `myCookie=${token}; expires= ${new Date(expired)};`
+                    window.location = "products.html";
                 })
                 .catch((error) => {
                     console.log(error);
                 })
-        },
-        checkDetail(item) {
-            this.tempProduct = item;
         }
     },
-    mounted() {
-        const token = document.cookie.replace(/(?:(?:^|.*;\s*)myCookie\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-        axios.defaults.headers.common['Authorization'] = token;
-
-        this.getData();
-    }
-};
+}
 
 Vue.createApp(app).mount("#app");
+
+
+
